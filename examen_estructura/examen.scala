@@ -16,10 +16,7 @@ object Examen {
    * Selecciona los nombres de los estudiantes y ordénalos por calificación de forma descendente.
    */
   def ejercicio1(estudiantes: DataFrame)(implicit spark: SparkSession): DataFrame = {
-    // 1. Mostrar esquema
     estudiantes.printSchema()
-
-    // 2. Filtrar estudiantes con calificación > 8 y MOSTRAR por pantalla
     println("=== Estudiantes con calificación mayor a 8 ===")
     estudiantes
       .filter("calificacion > 8")
@@ -36,12 +33,9 @@ object Examen {
    * Aplica esta función a una columna de un DataFrame que contenga una lista de números.
    */
   def ejercicio2(numeros: DataFrame)(implicit spark: SparkSession): DataFrame = {
-    // Definir UDF que determina si un número es par o impar
     val esParImpar = udf((numero: Int) => {
       if (numero % 2 == 0) "Par" else "Impar"
     })
-
-    // Aplicar la UDF a la columna "numero"
     numeros.select(esParImpar(col("numero")).alias("numero"))
   }
 
@@ -52,8 +46,6 @@ object Examen {
    * realiza un join entre ellos y calcula el promedio de calificaciones por estudiante.
    */
   def ejercicio3(estudiantes: DataFrame, calificaciones: DataFrame): DataFrame = {
-    // Join entre estudiantes y calificaciones usando id = id_estudiante
-    // Agrupar por id y nombre, calcular el promedio de calificaciones
     estudiantes
       .join(calificaciones, estudiantes("id") === calificaciones("id_estudiante"))
       .groupBy("id", "nombre")
@@ -66,11 +58,8 @@ object Examen {
    */
   def ejercicio4(palabras: List[String])(implicit spark: SparkSession): RDD[(String, Int)] = {
     val sc = spark.sparkContext
-
-    // Crear RDD a partir de la lista
     val palabrasRDD = sc.parallelize(palabras)
 
-    // Mapear cada palabra a (palabra, 1) y reducir por clave contando ocurrencias
     palabrasRDD
       .map(palabra => (palabra, 1))
       .reduceByKey(_ + _)
@@ -83,8 +72,6 @@ object Examen {
    * y calcula el ingreso total (cantidad * precio_unitario) por producto.
    */
   def ejercicio5(ventas: DataFrame)(implicit spark: SparkSession): DataFrame = {
-    // Calcular ingreso total por cada fila (cantidad * precio_unitario)
-    // Agrupar por id_producto y sumar los ingresos
     ventas
       .withColumn("ingreso", col("cantidad") * col("precio_unitario"))
       .groupBy("id_producto")
@@ -93,3 +80,4 @@ object Examen {
   }
 
 }
+
